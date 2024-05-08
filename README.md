@@ -47,12 +47,12 @@ Inspiration for this project comes from this [post](https://waitbutwhy.com/2014/
     - Created on build with either the [dev](#running-the-app) or [prod](#production) profile
     - `js/compiled/`: compiled CLJS (`shadow-cljs`)
       - Not tracked in source control; see [`.gitignore`](.gitignore)
-* [`src/time_remained/styles.cljs`](src/time_remained/styles.cljs): CSS compilation source file (ClojureScript,
+* [`src/visualisation-of-lifetime/styles.cljs`](src/visualisation-of-lifetime/styles.cljs): CSS compilation source file (ClojureScript,
 [Garden](https://github.com/noprompt/garden))
-* [`src/time_remained/`](src/time_remained/): SPA source files (ClojureScript,
+* [`src/visualisation-of-lifetime/`](src/visualisation-of-lifetime/): SPA source files (ClojureScript,
 [re-frame](https://github.com/Day8/re-frame))
-  - [`core.cljs`](src/time_remained/core.cljs): contains the SPA entry point, `init`
-* [`test/time_remained/`](test/time_remained/): test files (ClojureScript,
+  - [`core.cljs`](src/visualisation-of-lifetime/core.cljs): contains the SPA entry point, `init`
+* [`test/visualisation-of-lifetime/`](test/visualisation-of-lifetime/): test files (ClojureScript,
 [cljs.test](https://clojurescript.org/tools/testing))
   - Only namespaces ending in `-test` (files `*_test.cljs`) are compiled and sent to the test runner
 * [`.github/workflows/`](.github/workflows/): contains the
@@ -209,7 +209,7 @@ npx shadow-cljs <action> app
 ```
 ### Debug Logging
 
-The `debug?` variable in [`config.cljs`](src/cljs/time_remained/config.cljs) defaults to `true` in
+The `debug?` variable in [`config.cljs`](src/cljs/visualisation-of-lifetime/config.cljs) defaults to `true` in
 [`dev`](#running-the-app) builds, and `false` in [`prod`](#production) builds.
 
 Use `debug?` for logging or other tasks that should run only on `dev` builds:
