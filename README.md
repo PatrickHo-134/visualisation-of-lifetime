@@ -78,7 +78,7 @@ Use your preferred editor or IDE that supports Clojure/ClojureScript development
         ```bash
         export CHROME_BIN=chromium-browser
        ```
-5. Clone this repo and open a terminal in the `time-remained` project root directory
+5. Clone this repo and open a terminal in the `lifetime-visualisation` project root directory
 
 ### Browser Setup
 
@@ -215,8 +215,8 @@ The `debug?` variable in [`config.cljs`](src/cljs/time_remained/config.cljs) def
 Use `debug?` for logging or other tasks that should run only on `dev` builds:
 
 ```clj
-(ns time-remained.example
-  (:require [time-remained.config :as config])
+(ns lifetime-visualisation.example
+  (:require [lifetime-visualisation.config :as config])
 
 (when config/debug?
   (println "This message will appear in the browser console only on dev builds."))
