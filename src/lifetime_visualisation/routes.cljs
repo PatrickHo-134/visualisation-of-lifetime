@@ -10,8 +10,8 @@
 
 (def routes
   (atom
-    ["/" {""      :home
-          "about" :about}]))
+    ["https://patrickho-134.github.io/visualisation-of-lifetime/" {""      :home
+                                                                   "about" :about}]))
 
 (defn parse
   [url]
