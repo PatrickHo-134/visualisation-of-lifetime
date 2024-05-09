@@ -5,8 +5,7 @@
    [lifetime-visualisation.events :as events]
    [lifetime-visualisation.routes :as routes]
    [lifetime-visualisation.views :as views]
-   [lifetime-visualisation.config :as config]
-   ))
+   [lifetime-visualisation.config :as config]))
 
 
 (defn dev-setup []

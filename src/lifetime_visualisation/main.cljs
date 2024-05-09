@@ -1,80 +1,15 @@
 (ns lifetime-visualisation.main
-  (:require ["reactstrap" :as rs]
-            [cljs-time.core :as time.core]
-            [re-frame.core :as rf]
+  (:require [re-frame.core :as rf]
             [reagent.core :as ra]
-            [lifetime-visualisation.utils :as utils]))
-
-(def row (ra/adapt-react-class rs/Row))
-(def col (ra/adapt-react-class rs/Col))
-(def dropdown-menu (ra/adapt-react-class rs/DropdownMenu))
-(def dropdown-item (ra/adapt-react-class rs/DropdownItem))
-(def container (ra/adapt-react-class rs/Container))
-(def popover (ra/adapt-react-class rs/Popover))
-(def popover-body (ra/adapt-react-class rs/PopoverBody))
-(def popover-header (ra/adapt-react-class rs/PopoverHeader))
-
-(def form-group (ra/adapt-react-class rs/FormGroup))
-
-; re-frame events
-(rf/reg-event-db
-  :init
-  (fn [_ _]
-    {:doc {}}))
-
-(rf/reg-sub
-  :form
-  (fn [db _]
-    (:form db)))
-
-(rf/reg-sub
-  :start-date
-  (fn [db _]
-    (when-let [d (get-in db [:form :start-date])]
-      (utils/date->iso-date-str d))))
-
-(rf/reg-sub
-  :end-date
-  (fn [db _]
-    (when-let [d (get-in db [:form :end-date])]
-      (utils/date->iso-date-str d))))
-
-(rf/reg-sub
-  :dates-sequence
-  (fn [db _]
-    (let [{:keys [start-date end-date frequency]} (get-in db [:form])]
-      (if (and start-date end-date frequency)
-        (-> (utils/create-dates-during-period start-date end-date frequency)
-            (utils/produce-date-sequence (time.core/today)))
-        []))))
-
-(rf/reg-sub
-  :value
-  :<- [:form]
-  (fn [doc [_ path]]
-    (get-in doc path)))
-
-(rf/reg-event-db
-  :set-value
-  (fn [db [_ path value]]
-    (assoc-in db (into [:form] path) value)))
-
-(rf/reg-event-db
-  :update-value
-  (fn [db [_ f path value]]
-    (update-in db (into [:form] path) f value)))
-
-(rf/reg-event-db :initialize-form
-  (fn [db _]
-    (assoc-in db [:form] {:start-date (utils/str->date "1993-04-13")
-                          :end-date   (utils/str->date "2073-04-13")
-                          :frequency  :monthly})))
+            [lifetime-visualisation.utils :as utils]
+            [lifetime-visualisation.ui-components :as ui
+             :refer [container row col form-group popover popover-body]]))
 
 (defn set-start-date-dispatch [e]
   (->> e
        utils/get-value-from-event
        utils/str->date
-       (conj [:set-value [:start-date]])
+       (conj [:set-start-date])
        (rf/dispatch)))
 
 (defn start-date []
@@ -89,7 +24,7 @@
   (->> e
        utils/get-value-from-event
        utils/str->date
-       (conj [:set-value [:end-date]])
+       (conj [:set-end-date])
        (rf/dispatch)))
 
 (defn end-date []
@@ -104,7 +39,7 @@
   (->> e
        utils/get-value-from-event
        int
-       (conj [:set-value [:occurences]])
+       (conj [:set-occurences])
        (rf/dispatch)))
 
 (defn occurences []
@@ -119,7 +54,7 @@
   (->> e
        utils/get-value-from-event
        keyword
-       (conj [:set-value [:frequency]])
+       (conj [:set-frequency])
        (rf/dispatch)))
 
 (defn frequency []
@@ -168,7 +103,7 @@
     (for [d dates]
       ^{:key (str (:date d))} [render-checkbox d])]])
 
-(defn form []
+(defn component []
   (ra/with-let [dates (rf/subscribe [:dates-sequence])
                 _     (rf/dispatch [:initialize-form])]
     [container
@@ -191,6 +126,3 @@
             [checkbox-sequence n-dates]
             [row [col "......"]]
             [row [col "View has reached limit"]]])))]))
-
-(defn component []
-  [form])
