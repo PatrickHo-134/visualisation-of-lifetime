@@ -22,6 +22,9 @@
        "go to About Page"]]])
 
 (defmethod routes/panels :home-panel [] [home-panel])
+;; FIXME: This is a hack to make the app display home-panel
+;; even when the route is not found
+(defmethod routes/panels :default [] [home-panel])
 
 ;; about
 

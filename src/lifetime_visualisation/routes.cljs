@@ -6,12 +6,11 @@
    [lifetime-visualisation.events :as events]))
 
 (defmulti panels identity)
-(defmethod panels :default [] [:div "No panel found for this route."])
 
 (def routes
   (atom
-    ["https://patrickho-134.github.io/visualisation-of-lifetime/" {""      :home
-                                                                   "about" :about}]))
+    ["/" {""      :home
+          "about" :about}]))
 
 (defn parse
   [url]
