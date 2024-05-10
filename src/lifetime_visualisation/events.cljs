@@ -69,11 +69,11 @@
 
 (reg-event-fx :initialize-form
   (fn [{:keys [db]} _]
-    {:db (assoc-in db [:form] {:start-date (utils/str->date "2000-01-01")
-                               :end-date   (utils/str->date "2080-01-01")
-                               :enable-end-date? true
+    {:db (assoc-in db [:form] {:start-date         (utils/str->date "2000-01-01")
+                               :end-date           (utils/str->date "2080-01-01")
+                               :enable-end-date?   true
                                :enable-occurences? false
-                               :frequency  :monthly})
+                               :frequency          :monthly})
      :dispatch [:recalculate-dates-sequence]}))
 
 (reg-event-db :calculate-end-date-and-dates-sequence
@@ -100,12 +100,13 @@
 
 (reg-event-fx :recalculate-dates-sequence
   (fn [{:keys [db]} _]
-    (let [{:keys [start-date end-date occurences frequency]} (get-in db [:form])]
+    (let [{:keys [start-date end-date occurences
+                  frequency enable-end-date? enable-occurences?]} (get-in db [:form])]
       {:dispatch (cond
-                   (and start-date end-date frequency)
+                   (and start-date end-date enable-end-date? frequency)
                    [:calculate-occurences-and-dates-sequence]
 
-                   (and start-date occurences frequency)
+                   (and start-date occurences enable-occurences? frequency)
                    [:calculate-end-date-and-dates-sequence]
 
                    :else

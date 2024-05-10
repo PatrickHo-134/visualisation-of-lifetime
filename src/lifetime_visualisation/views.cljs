@@ -2,7 +2,6 @@
   (:require [lifetime-visualisation.events :as events]
             [lifetime-visualisation.main :as main]
             [lifetime-visualisation.routes :as routes]
-            [lifetime-visualisation.styles :as styles]
             [lifetime-visualisation.subs :as subs]
             [lifetime-visualisation.ui-components :as ui]
             [re-frame.core :as re-frame]))
@@ -13,7 +12,7 @@
 (defn home-panel []
   [ui/container
    [:h1
-    {:class (styles/level1)}
+    {:class "page-heading"}
     "Visualization of lifetime"]
 
    [:hr]

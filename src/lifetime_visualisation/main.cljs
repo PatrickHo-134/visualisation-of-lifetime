@@ -65,9 +65,10 @@
               {:label "Fortnightly" :value :fortnightly :id :fortnightly}
               {:label "Mothly" :value :monthly :id :monthly}
               {:label "Yearly" :value :yearly :id :yearly}]]
-    [:select {:name "select-frequency"
-              :id :select-frequency
-              :style {:height "2rem"}
+    [:select {:name      "select-frequency"
+              :id        :select-frequency
+              :style     {:height "2rem"}
+              :value     (or @(rf/subscribe [:value [:frequency]]) :monthly)
               :on-change set-frequency-dispatch}
      (for [{:keys [label id value]} menu]
        [:option {:key   (str "item-" id)
@@ -116,24 +117,23 @@
 (defn end-date-toggle-switch []
   [form {:class "form-switch"}
    [ui/input {:type     "switch"
-              :on-click #(rf/dispatch [:toggle-end-date])
-              :checked  @(rf/subscribe [:value [:enable-end-date?]])
-              :outline  true}]
+              :on-change #(rf/dispatch [:toggle-end-date])
+              :checked  @(rf/subscribe [:value [:enable-end-date?]])}]
    [ui/label {:check true
-              :style {:margin-left "5px"}} "To Date"]])
+              :style {:margin-left "5px"}}
+    "To Date"]])
 
 (defn occurences-toggle-switch []
   [form {:class "form-switch"}
    [ui/input {:type     "switch"
-              :on-click #(rf/dispatch [:toggle-occurences])
-              :checked  @(rf/subscribe [:value [:enable-occurences?]])
-              :outline  true}]
+              :on-change #(rf/dispatch [:toggle-occurences])
+              :checked  @(rf/subscribe [:value [:enable-occurences?]])}]
    [ui/label {:check true
-              :style {:margin-left "5px"}} "Occurences"]])
+              :style {:margin-left "5px"}}
+    "Occurences"]])
 
 (defn component []
   (ra/with-let [form-data (rf/subscribe [:form])
-                dates (rf/subscribe [:value [:dates-sequence]])
                 _     (rf/dispatch [:initialize-form])]
     (let [{:keys [dates-sequence enable-end-date? enable-occurences?]} @form-data]
       [container
