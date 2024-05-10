@@ -14,10 +14,10 @@
        (rf/dispatch)))
 
 (defn start-date []
-  [:input {:type      :date
+  [:input {:class     "input-field"
+           :type      :date
            :id        :start-date
            :name      "From date"
-           :style     {:height "2rem"}
            :value     @(rf/subscribe [:start-date])
            :on-change set-start-date-dispatch}])
 
@@ -29,10 +29,10 @@
        (rf/dispatch)))
 
 (defn end-date [disabled?]
-  [:input {:type      :date
+  [:input {:class     "input-field"
+           :type      :date
            :id        :end-date
            :name      "To date"
-           :style     {:height "2rem"}
            :value     @(rf/subscribe [:end-date])
            :disabled  disabled?
            :on-change set-end-date-dispatch}])
@@ -45,9 +45,9 @@
        (rf/dispatch)))
 
 (defn occurences [disabled?]
-  [:input {:type      :numeric
+  [:input {:class     "input-field"
+           :type      :numeric
            :id        :occurences
-           :style     {:height "2rem"}
            :disabled  disabled?
            :min       0
            :value     @(rf/subscribe [:value [:occurences]])
@@ -65,9 +65,9 @@
               {:label "Fortnightly" :value :fortnightly :id :fortnightly}
               {:label "Mothly" :value :monthly :id :monthly}
               {:label "Yearly" :value :yearly :id :yearly}]]
-    [:select {:name      "select-frequency"
+    [:select {:class     "input-field"
+              :name      "select-frequency"
               :id        :select-frequency
-              :style     {:height "2rem"}
               :value     (or @(rf/subscribe [:value [:frequency]]) :monthly)
               :on-change set-frequency-dispatch}
      (for [{:keys [label id value]} menu]
@@ -76,12 +76,10 @@
         label])]))
 
 (defn square-check-icon []
-  [:i {:class "fa fa-check-square fa-fw"
-       :style {:font-size "15px"}}])
+  [:i {:class "fa fa-check-square fa-fw custom-icon"}])
 
 (defn square-icon []
-  [:i {:class "fa fa-square-o fa-fw"
-       :style {:font-size "15px"}}])
+  [:i {:class "fa fa-square-o fa-fw custom-icon"}])
 
 (defn render-checkbox [{:keys [in-future?] :as this-date}]
   (ra/with-let [show-popover? (ra/atom false)
@@ -119,8 +117,8 @@
    [ui/input {:type     "switch"
               :on-change #(rf/dispatch [:toggle-end-date])
               :checked  @(rf/subscribe [:value [:enable-end-date?]])}]
-   [ui/label {:check true
-              :style {:margin-left "5px"}}
+   [ui/label {:class "toggle-label"
+              :check true}
     "To Date"]])
 
 (defn occurences-toggle-switch []
@@ -128,8 +126,8 @@
    [ui/input {:type     "switch"
               :on-change #(rf/dispatch [:toggle-occurences])
               :checked  @(rf/subscribe [:value [:enable-occurences?]])}]
-   [ui/label {:check true
-              :style {:margin-left "5px"}}
+   [ui/label {:class "toggle-label"
+              :check true}
     "Occurences"]])
 
 (defn component []

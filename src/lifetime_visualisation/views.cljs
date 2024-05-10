@@ -13,7 +13,7 @@
   [ui/container
    [:h1
     {:class "page-heading"}
-    "Visualization of lifetime"]
+    "Visualization of Lifetime"]
 
    [:hr]
 

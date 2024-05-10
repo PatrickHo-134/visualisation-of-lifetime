@@ -3,3 +3,16 @@
      text-align: center;
 }
 
+.input-field {
+     height: 2rem;
+}
+
+.toggle-label {
+     margin-left: 0.5rem;
+     font-weight: bold;
+}
+
+.custom-icon {
+     font-size: 0.8rem;
+}
+
