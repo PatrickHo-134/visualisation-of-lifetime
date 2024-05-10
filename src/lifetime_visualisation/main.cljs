@@ -114,18 +114,20 @@
 
 (defn end-date-toggle-switch []
   [form {:class "form-switch"}
-   [ui/input {:type     "switch"
+   [ui/input {:class     "custom-control-input"
+              :type      "switch"
               :on-change #(rf/dispatch [:toggle-end-date])
-              :checked  @(rf/subscribe [:value [:enable-end-date?]])}]
+              :checked   @(rf/subscribe [:value [:enable-end-date?]])}]
    [ui/label {:class "toggle-label"
               :check true}
     "To Date"]])
 
 (defn occurences-toggle-switch []
   [form {:class "form-switch"}
-   [ui/input {:type     "switch"
+   [ui/input {:class     "custom-control-input"
+              :type      "switch"
               :on-change #(rf/dispatch [:toggle-occurences])
-              :checked  @(rf/subscribe [:value [:enable-occurences?]])}]
+              :checked   @(rf/subscribe [:value [:enable-occurences?]])}]
    [ui/label {:class "toggle-label"
               :check true}
     "Occurences"]])

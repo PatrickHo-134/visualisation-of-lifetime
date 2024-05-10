@@ -16,3 +16,7 @@
      font-size: 0.8rem;
 }
 
+.custom-control-input:checked  {
+     border-color: green !important;
+     background-color: green !important;
+ }
