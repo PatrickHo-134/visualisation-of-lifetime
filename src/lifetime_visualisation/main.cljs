@@ -3,13 +3,14 @@
             [reagent.core :as ra]
             [lifetime-visualisation.utils :as utils]
             [lifetime-visualisation.ui-components :as ui
-             :refer [container row col form-group popover popover-body]]))
+             :refer [container row col form form-group
+                     popover popover-body button]]))
 
 (defn set-start-date-dispatch [e]
   (->> e
        utils/get-value-from-event
        utils/str->date
-       (conj [:set-start-date])
+       (conj [:set-value [:start-date]])
        (rf/dispatch)))
 
 (defn start-date []
@@ -24,37 +25,39 @@
   (->> e
        utils/get-value-from-event
        utils/str->date
-       (conj [:set-end-date])
+       (conj [:set-value [:end-date]])
        (rf/dispatch)))
 
-(defn end-date []
+(defn end-date [disabled?]
   [:input {:type      :date
            :id        :end-date
            :name      "To date"
            :style     {:height "2rem"}
            :value     @(rf/subscribe [:end-date])
+           :disabled  disabled?
            :on-change set-end-date-dispatch}])
 
 (defn set-occurences-dispatch [e]
   (->> e
        utils/get-value-from-event
        int
-       (conj [:set-occurences])
+       (conj [:set-value [:occurences]])
        (rf/dispatch)))
 
-(defn occurences []
-  [:input {:type :numeric
-           :id :occurences
-           :style {:height "2rem"}
-           :min 0
-           :value @(rf/subscribe [:value [:occurences]])
+(defn occurences [disabled?]
+  [:input {:type      :numeric
+           :id        :occurences
+           :style     {:height "2rem"}
+           :disabled  disabled?
+           :min       0
+           :value     @(rf/subscribe [:value [:occurences]])
            :on-change set-occurences-dispatch}])
 
 (defn set-frequency-dispatch [e]
   (->> e
        utils/get-value-from-event
        keyword
-       (conj [:set-frequency])
+       (conj [:set-value [:frequency]])
        (rf/dispatch)))
 
 (defn frequency []
@@ -103,26 +106,56 @@
     (for [d dates]
       ^{:key (str (:date d))} [render-checkbox d])]])
 
+(defn calculate-button [disabled?]
+  [button {:on-click #(rf/dispatch [:recalculate-dates-sequence])
+           :color    "success"
+           :outline  false
+           :disabled disabled?}
+   "Calculate"])
+
+(defn end-date-toggle-switch []
+  [form {:class "form-switch"}
+   [ui/input {:type     "switch"
+              :on-click #(rf/dispatch [:toggle-end-date])
+              :checked  @(rf/subscribe [:value [:enable-end-date?]])
+              :outline  true}]
+   [ui/label {:check true
+              :style {:margin-left "5px"}} "To Date"]])
+
+(defn occurences-toggle-switch []
+  [form {:class "form-switch"}
+   [ui/input {:type     "switch"
+              :on-click #(rf/dispatch [:toggle-occurences])
+              :checked  @(rf/subscribe [:value [:enable-occurences?]])
+              :outline  true}]
+   [ui/label {:check true
+              :style {:margin-left "5px"}} "Occurences"]])
+
 (defn component []
-  (ra/with-let [dates (rf/subscribe [:dates-sequence])
+  (ra/with-let [form-data (rf/subscribe [:form])
+                dates (rf/subscribe [:value [:dates-sequence]])
                 _     (rf/dispatch [:initialize-form])]
-    [container
-     [form-group
-      [row
-       [col {:class "col-3"}
-        [row "From Date:" [start-date]]]
-       [col {:class "col-3"}
-        [row "To Date:" [end-date]]]
-       [col {:class "col-3"}
-        [row "Occurences:" [occurences]]]
-       [col {:class "col-3"}
-        [row "Frequency:" [frequency]]]]]
-     (when (seq @dates)
-       (if (< (count @dates) 2000)
-         [container
-          [checkbox-sequence @dates]]
-         (let [n-dates (take 2000 @dates)]
+    (let [{:keys [dates-sequence enable-end-date? enable-occurences?]} @form-data]
+      [container
+       [form-group
+        [row
+         [col {:class "col-3"}
+          [row "From Date" [start-date]]]
+         [col {:class "col-3"}
+          [row [end-date-toggle-switch] [end-date (not enable-end-date?)]]]
+         [col {:class "col-3"}
+          [row [occurences-toggle-switch] [occurences (not enable-occurences?)]]]
+         [col {:class "col-3"}
+          [row "Frequency" [frequency]]]]]
+       [row {:class "mb-2"}
+        [col {:style {:text-align :center}}
+         [calculate-button false]]] ;; TODO: validation here!
+       (when (seq dates-sequence)
+         (if (< (count dates-sequence) 2000)
            [container
-            [checkbox-sequence n-dates]
-            [row [col "......"]]
-            [row [col "View has reached limit"]]])))]))
+            [checkbox-sequence dates-sequence]]
+           (let [n-dates (take 2000 dates-sequence)]
+             [container
+              [checkbox-sequence n-dates]
+              [row [col "......"]]
+              [row [col "View has reached limit"]]])))])))

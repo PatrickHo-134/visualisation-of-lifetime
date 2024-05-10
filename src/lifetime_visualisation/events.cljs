@@ -53,10 +53,26 @@
   (fn [db [_ f path value]]
     (update-in db (into [:form] path) f value)))
 
+(reg-event-db :toggle-end-date
+  (fn [db [_ _]]
+    (let [enabled? (get-in db [:form :enable-end-date?] false)]
+      (-> db
+          (assoc-in [:form :enable-end-date?] (not enabled?))
+          (assoc-in [:form :enable-occurences?] enabled?)))))
+
+(reg-event-db :toggle-occurences
+  (fn [db [_ _]]
+    (let [enabled? (get-in db [:form :enable-occurences?] false)]
+      (-> db
+          (assoc-in [:form :enable-occurences?] (not enabled?))
+          (assoc-in [:form :enable-end-date?] enabled?)))))
+
 (reg-event-fx :initialize-form
   (fn [{:keys [db]} _]
     {:db (assoc-in db [:form] {:start-date (utils/str->date "2000-01-01")
                                :end-date   (utils/str->date "2080-01-01")
+                               :enable-end-date? true
+                               :enable-occurences? false
                                :frequency  :monthly})
      :dispatch [:recalculate-dates-sequence]}))
 
@@ -95,22 +111,3 @@
                    :else
                    nil)})))
 
-(reg-event-fx :set-start-date
-  (fn [{:keys [db]} [_ value]]
-    {:db       (assoc-in db [:form :start-date] value)
-     :dispatch [:recalculate-dates-sequence]}))
-
-(reg-event-fx :set-end-date
-  (fn [{:keys [db]} [_ value]]
-    {:db       (assoc-in db [:form :end-date] value)
-     :dispatch [:recalculate-dates-sequence]}))
-
-(reg-event-fx :set-occurences
-  (fn [{:keys [db]} [_ value]]
-    {:db       (assoc-in db [:form :occurences] value)
-     :dispatch [:recalculate-dates-sequence]}))
-
-(reg-event-fx :set-frequency
-  (fn [{:keys [db]} [_ value]]
-    {:db       (assoc-in db [:form :frequency] value)
-     :dispatch [:recalculate-dates-sequence]}))

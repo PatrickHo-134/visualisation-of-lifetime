@@ -26,4 +26,5 @@
 
 (defclass level1
   []
-  {:color :green})
+  {:color      :green
+   :text-align :center})

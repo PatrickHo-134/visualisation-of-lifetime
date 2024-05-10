@@ -1,20 +1,22 @@
 (ns lifetime-visualisation.views
-  (:require
-   [re-frame.core :as re-frame]
-   [lifetime-visualisation.styles :as styles]
-   [lifetime-visualisation.events :as events]
-   [lifetime-visualisation.routes :as routes]
-   [lifetime-visualisation.subs :as subs]
-   [lifetime-visualisation.main :as main]))
+  (:require [lifetime-visualisation.events :as events]
+            [lifetime-visualisation.main :as main]
+            [lifetime-visualisation.routes :as routes]
+            [lifetime-visualisation.styles :as styles]
+            [lifetime-visualisation.subs :as subs]
+            [lifetime-visualisation.ui-components :as ui]
+            [re-frame.core :as re-frame]))
 
 
 ;; home
 
 (defn home-panel []
-  [:div
+  [ui/container
    [:h1
     {:class (styles/level1)}
     "Visualization of lifetime"]
+
+   [:hr]
 
    [main/component]
    #_[:div
