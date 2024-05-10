@@ -1,19 +1,31 @@
+body {
+     background-color: green;
+}
+
 .page-heading {
      color:      green;
      text-align: center;
 }
 
-.input-field {
+.input-field-control {
      height: 2rem;
+}
+
+.input-field-label {
+     padding-left: "-12px";
+     color: green;
+     font-weight: bold;
 }
 
 .toggle-label {
      margin-left: 0.5rem;
      font-weight: bold;
+     color: green;
 }
 
 .custom-icon {
      font-size: 0.8rem;
+     color: green;
 }
 
 .custom-control-input:checked  {

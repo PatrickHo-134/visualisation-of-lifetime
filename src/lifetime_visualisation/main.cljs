@@ -14,7 +14,7 @@
        (rf/dispatch)))
 
 (defn start-date []
-  [:input {:class     "input-field"
+  [:input {:class     "input-field-control"
            :type      :date
            :id        :start-date
            :name      "From date"
@@ -29,7 +29,7 @@
        (rf/dispatch)))
 
 (defn end-date [disabled?]
-  [:input {:class     "input-field"
+  [:input {:class     "input-field-control"
            :type      :date
            :id        :end-date
            :name      "To date"
@@ -45,7 +45,7 @@
        (rf/dispatch)))
 
 (defn occurences [disabled?]
-  [:input {:class     "input-field"
+  [:input {:class     "input-field-control"
            :type      :numeric
            :id        :occurences
            :disabled  disabled?
@@ -65,7 +65,7 @@
               {:label "Fortnightly" :value :fortnightly :id :fortnightly}
               {:label "Mothly" :value :monthly :id :monthly}
               {:label "Yearly" :value :yearly :id :yearly}]]
-    [:select {:class     "input-field"
+    [:select {:class     "input-field-control"
               :name      "select-frequency"
               :id        :select-frequency
               :value     (or @(rf/subscribe [:value [:frequency]]) :monthly)
@@ -113,7 +113,7 @@
    "Calculate"])
 
 (defn end-date-toggle-switch []
-  [form {:class "form-switch"}
+  [:div {:class "form-switch"}
    [ui/input {:class     "custom-control-input"
               :type      "switch"
               :on-change #(rf/dispatch [:toggle-end-date])
@@ -123,7 +123,7 @@
     "To Date"]])
 
 (defn occurences-toggle-switch []
-  [form {:class "form-switch"}
+  [:div {:class "form-switch"}
    [ui/input {:class     "custom-control-input"
               :type      "switch"
               :on-change #(rf/dispatch [:toggle-occurences])
@@ -139,14 +139,22 @@
       [container
        [form-group
         [row
-         [col {:class "col-3"}
-          [row "From Date" [start-date]]]
-         [col {:class "col-3"}
-          [row [end-date-toggle-switch] [end-date (not enable-end-date?)]]]
-         [col {:class "col-3"}
-          [row [occurences-toggle-switch] [occurences (not enable-occurences?)]]]
-         [col {:class "col-3"}
-          [row "Frequency" [frequency]]]]]
+         [col {:class "col-6 col-md-3"}
+          [row
+           [:span.input-field-label "From Date"]
+           [start-date]]]
+         [col {:class "col-6 col-md-3"}
+          [row
+           [end-date-toggle-switch]
+           [end-date (not enable-end-date?)]]]
+         [col {:class "col-6 col-md-3"}
+          [row
+           [occurences-toggle-switch]
+           [occurences (not enable-occurences?)]]]
+         [col {:class "col-6 col-md-3"}
+          [row
+           [:span.input-field-label "Frequency"]
+           [frequency]]]]]
        [row {:class "mb-2"}
         [col {:style {:text-align :center}}
          [calculate-button false]]] ;; TODO: validation here!
