@@ -7,16 +7,18 @@
             [re-frame.core :as re-frame :refer [reg-event-db reg-event-fx
                                                 reg-sub]]))
 
-(defn default-form-data []
+(defn default-form-data [title]
   (let [today              (time.coerce/to-date (time.core/now))
         same-day-next-year (-> (time.core/now)
                                (time.coerce/to-date-time)
                                (time.core/plus (time.core/years 1))
                                (time.coerce/to-date))]
-    {:start-date         today
+    {:title              title
+     :start-date         today
      :end-date           same-day-next-year
      :enable-end-date?   true
      :enable-occurences? false
+     :disable-title?     true
      :frequency          :weekly}))
 
 (reg-sub :sections
@@ -73,7 +75,7 @@
 
 (reg-event-fx :initialize-main-page
   (fn [{:keys [db]} _]
-    {:db       (assoc-in db [:sections] {:form-1 (default-form-data)})
+    {:db       (assoc-in db [:sections] {:form-1 (default-form-data "Example 1")})
      :dispatch [:recalculate-dates-sequence :form-1]}))
 
 (reg-event-db :calculate-end-date-and-dates-sequence
@@ -114,4 +116,8 @@
 
 (reg-event-db :add-section
   (fn [db [_ new-form-id]]
-    (assoc-in db [:sections new-form-id] (default-form-data))))
+    (assoc-in db [:sections new-form-id] (default-form-data (name new-form-id)))))
+
+(reg-event-db :toggle-section-title
+  (fn [db [_ form-id]]
+    (update-in db [:sections form-id :disable-title?] not)))

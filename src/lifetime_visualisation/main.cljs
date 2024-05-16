@@ -132,28 +132,62 @@
               :check true}
     "Occurences"]])
 
+(defn form-input-fields [form-id enable-end-date? enable-occurences?]
+  (let [input-col-config {:class "col-6 col-md-3 mt-3"}]
+    [row {:class "m-2"}
+     [col input-col-config
+      [row
+       [:span.input-field-label "From Date"]
+       [start-date form-id]]]
+     [col input-col-config
+      [row
+       [end-date-toggle-switch form-id]
+       [end-date form-id (not enable-end-date?)]]]
+     [col input-col-config
+      [row
+       [occurences-toggle-switch form-id]
+       [occurences form-id (not enable-occurences?)]]]
+     [col input-col-config
+      [row
+       [:span.input-field-label "Frequency"]
+       [frequency form-id]]]]))
+
+(defn set-title-dispatch [form-id e]
+  (->> e
+       utils/get-value-from-event
+       (conj [:set-value form-id [:title]])
+       (rf/dispatch)))
+
+(defn section-title-input [form-id]
+  (ra/create-class
+   {:reagent-render         (fn []
+                              [:input {:class     "title-input-field"
+                                       :type      :text
+                                       :id        (str "section-title-" form-id)
+                                       :value     @(rf/subscribe [:value form-id [:title]])
+                                       :on-change (partial set-title-dispatch form-id)
+                                       :on-blur   #(rf/dispatch [:toggle-section-title form-id])}])
+    :component-did-mount    (fn [] (-> js/document
+                                       (.getElementById (str "section-title-" form-id))
+                                       (.focus)))}))
+
+(defn section-title-div [current-title form-id edit-disabled?]
+  (if edit-disabled?
+    [:div {:class    "section-title"
+           :on-click (fn [] (rf/dispatch [:toggle-section-title form-id]))}
+     current-title
+     [:i {:class "fa fa-edit"
+          :style {:margin-left "1rem"}}]]
+    [section-title-input form-id]))
+
 (defn section [form-id]
   (ra/with-let [form-data (rf/subscribe [:section-data form-id])]
-    (let [{:keys [dates-sequence enable-end-date? enable-occurences?]} @form-data
-          input-col-config {:class "col-6 col-md-3 mt-3"}]
+    (let [{:keys [title dates-sequence enable-end-date? enable-occurences? disable-title?]} @form-data]
       [:div {:class "mt-5"}
-       [row {:class "m-2"}
-        [col input-col-config
-         [row
-          [:span.input-field-label "From Date"]
-          [start-date form-id]]]
-        [col input-col-config
-         [row
-          [end-date-toggle-switch form-id]
-          [end-date form-id (not enable-end-date?)]]]
-        [col input-col-config
-         [row
-          [occurences-toggle-switch form-id]
-          [occurences form-id (not enable-occurences?)]]]
-        [col input-col-config
-         [row
-          [:span.input-field-label "Frequency"]
-          [frequency form-id]]]]
+       [row
+        [col {:style {:text-align :center}}
+         [section-title-div title form-id disable-title?]]]
+       [form-input-fields form-id enable-end-date? enable-occurences?]
        [row {:class "my-3"}
         [col {:style {:text-align :center}}
          [calculate-button form-id false]]] ;; TODO: validation here!
