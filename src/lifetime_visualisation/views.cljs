@@ -3,24 +3,13 @@
             [lifetime-visualisation.main :as main]
             [lifetime-visualisation.routes :as routes]
             [lifetime-visualisation.subs :as subs]
-            [lifetime-visualisation.ui-components :as ui]
             [re-frame.core :as re-frame]))
 
 
 ;; home
 
 (defn home-panel []
-  [ui/container
-   [:h1
-    {:class "page-heading"}
-    "Visualization of Lifetime"]
-
-   [:hr]
-
-   [main/component]
-   #_[:div
-      [:a {:on-click #(re-frame/dispatch [::events/navigate :about])}
-       "go to About Page"]]])
+  [main/component])
 
 (defmethod routes/panels :home-panel [] [home-panel])
 ;; FIXME: This is a hack to make the app display home-panel

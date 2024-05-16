@@ -3,64 +3,64 @@
             [reagent.core :as ra]
             [lifetime-visualisation.utils :as utils]
             [lifetime-visualisation.ui-components :as ui
-             :refer [container row col form form-group
+             :refer [container row col
                      popover popover-body button]]))
 
-(defn set-start-date-dispatch [e]
+(defn set-start-date-dispatch [form-id e]
   (->> e
        utils/get-value-from-event
        utils/str->date
-       (conj [:set-value [:start-date]])
+       (conj [:set-value form-id [:start-date]])
        (rf/dispatch)))
 
-(defn start-date []
+(defn start-date [form-id]
   [:input {:class     "input-field-control"
            :type      :date
            :id        :start-date
            :name      "From date"
-           :value     @(rf/subscribe [:start-date])
-           :on-change set-start-date-dispatch}])
+           :value     @(rf/subscribe [:start-date form-id])
+           :on-change (partial set-start-date-dispatch form-id)}])
 
-(defn set-end-date-dispatch [e]
+(defn set-end-date-dispatch [form-id e]
   (->> e
        utils/get-value-from-event
        utils/str->date
-       (conj [:set-value [:end-date]])
+       (conj [:set-value form-id [:end-date]])
        (rf/dispatch)))
 
-(defn end-date [disabled?]
+(defn end-date [form-id disabled?]
   [:input {:class     "input-field-control"
            :type      :date
            :id        :end-date
            :name      "To date"
-           :value     @(rf/subscribe [:end-date])
+           :value     @(rf/subscribe [:end-date form-id])
            :disabled  disabled?
-           :on-change set-end-date-dispatch}])
+           :on-change (partial set-end-date-dispatch form-id)}])
 
-(defn set-occurences-dispatch [e]
+(defn set-occurences-dispatch [form-id e]
   (->> e
        utils/get-value-from-event
        int
-       (conj [:set-value [:occurences]])
+       (conj [:set-value form-id [:occurences]])
        (rf/dispatch)))
 
-(defn occurences [disabled?]
+(defn occurences [form-id disabled?]
   [:input {:class     "input-field-control"
            :type      :numeric
            :id        :occurences
            :disabled  disabled?
            :min       0
-           :value     @(rf/subscribe [:value [:occurences]])
-           :on-change set-occurences-dispatch}])
+           :value     @(rf/subscribe [:value form-id [:occurences]])
+           :on-change (partial set-occurences-dispatch form-id)}])
 
-(defn set-frequency-dispatch [e]
+(defn set-frequency-dispatch [form-id e]
   (->> e
        utils/get-value-from-event
        keyword
-       (conj [:set-value [:frequency]])
+       (conj [:set-value form-id [:frequency]])
        (rf/dispatch)))
 
-(defn frequency []
+(defn frequency [form-id]
   (let [menu [{:label "Weekly" :value :weekly :id :weekly}
               {:label "Fortnightly" :value :fortnightly :id :fortnightly}
               {:label "Mothly" :value :monthly :id :monthly}
@@ -68,8 +68,8 @@
     [:select {:class     "input-field-control"
               :name      "select-frequency"
               :id        :select-frequency
-              :value     (or @(rf/subscribe [:value [:frequency]]) :monthly)
-              :on-change set-frequency-dispatch}
+              :value     (or @(rf/subscribe [:value form-id [:frequency]]) :monthly)
+              :on-change (partial set-frequency-dispatch form-id)}
      (for [{:keys [label id value]} menu]
        [:option {:key   (str "item-" id)
                  :value value}
@@ -85,7 +85,7 @@
   (ra/with-let [show-popover? (ra/atom false)
                 element-id    (str "popover-" (utils/uuid-str))]
     [:<>
-     [:div {:id element-id
+     [:div {:id    element-id
             :style {:display :inline}}
       (if in-future?
         [square-icon]
@@ -105,59 +105,58 @@
     (for [d dates]
       ^{:key (str (:date d))} [render-checkbox d])]])
 
-(defn calculate-button [disabled?]
-  [button {:on-click #(rf/dispatch [:recalculate-dates-sequence])
+(defn calculate-button [form-id disabled?]
+  [button {:on-click #(rf/dispatch [:recalculate-dates-sequence form-id])
            :color    "success"
-           :outline  false
+           :outline  true
            :disabled disabled?}
-   "Calculate"])
+   [:b "Calculate"]])
 
-(defn end-date-toggle-switch []
+(defn end-date-toggle-switch [form-id]
   [:div {:class "form-switch"}
    [ui/input {:class     "custom-control-input"
               :type      "switch"
-              :on-change #(rf/dispatch [:toggle-end-date])
-              :checked   @(rf/subscribe [:value [:enable-end-date?]])}]
+              :on-change #(rf/dispatch [:toggle-end-date form-id])
+              :checked   @(rf/subscribe [:value form-id [:enable-end-date?]])}]
    [ui/label {:class "toggle-label"
               :check true}
     "To Date"]])
 
-(defn occurences-toggle-switch []
+(defn occurences-toggle-switch [form-id]
   [:div {:class "form-switch"}
    [ui/input {:class     "custom-control-input"
               :type      "switch"
-              :on-change #(rf/dispatch [:toggle-occurences])
-              :checked   @(rf/subscribe [:value [:enable-occurences?]])}]
+              :on-change #(rf/dispatch [:toggle-occurences form-id])
+              :checked   @(rf/subscribe [:value form-id [:enable-occurences?]])}]
    [ui/label {:class "toggle-label"
               :check true}
     "Occurences"]])
 
-(defn component []
-  (ra/with-let [form-data (rf/subscribe [:form])
-                _     (rf/dispatch [:initialize-form])]
-    (let [{:keys [dates-sequence enable-end-date? enable-occurences?]} @form-data]
-      [container
-       [form-group
-        [row
-         [col {:class "col-6 col-md-3"}
-          [row
-           [:span.input-field-label "From Date"]
-           [start-date]]]
-         [col {:class "col-6 col-md-3"}
-          [row
-           [end-date-toggle-switch]
-           [end-date (not enable-end-date?)]]]
-         [col {:class "col-6 col-md-3"}
-          [row
-           [occurences-toggle-switch]
-           [occurences (not enable-occurences?)]]]
-         [col {:class "col-6 col-md-3"}
-          [row
-           [:span.input-field-label "Frequency"]
-           [frequency]]]]]
-       [row {:class "mb-2"}
+(defn section [form-id]
+  (ra/with-let [form-data (rf/subscribe [:section-data form-id])]
+    (let [{:keys [dates-sequence enable-end-date? enable-occurences?]} @form-data
+          input-col-config {:class "col-6 col-md-3 mt-3"}]
+      [:div {:class "mt-5"}
+       [row {:class "m-2"}
+        [col input-col-config
+         [row
+          [:span.input-field-label "From Date"]
+          [start-date form-id]]]
+        [col input-col-config
+         [row
+          [end-date-toggle-switch form-id]
+          [end-date form-id (not enable-end-date?)]]]
+        [col input-col-config
+         [row
+          [occurences-toggle-switch form-id]
+          [occurences form-id (not enable-occurences?)]]]
+        [col input-col-config
+         [row
+          [:span.input-field-label "Frequency"]
+          [frequency form-id]]]]
+       [row {:class "my-3"}
         [col {:style {:text-align :center}}
-         [calculate-button false]]] ;; TODO: validation here!
+         [calculate-button form-id false]]] ;; TODO: validation here!
        (when (seq dates-sequence)
          (if (< (count dates-sequence) 2000)
            [container
@@ -166,4 +165,36 @@
              [container
               [checkbox-sequence n-dates]
               [row [col "......"]]
-              [row [col "View has reached limit"]]])))])))
+              [row [col "View has reached limit"]]])))
+       [:hr]])))
+
+(defn render-sections [sections]
+  [:div
+   (for [[section-id section-data] sections]
+    ^{:key section-id} [section section-id])])
+
+(defn add-section-button [section-count]
+  (let [new-form-id (->> (inc section-count)
+                         (str "form-")
+                         (keyword))]
+    [button {:on-click #(rf/dispatch [:add-section new-form-id])
+             :color    "success"
+             :outline  false}
+     [:b "Add New Section"]]))
+
+(defn component []
+  (ra/with-let [_        (rf/dispatch [:initialize-main-page])
+                sections (rf/subscribe [:sections])]
+    [ui/container
+     [:h1
+      {:class "page-heading"}
+      "Visualization of Lifetime"]
+
+     [:hr]
+
+     [render-sections @sections]
+
+     [:br]
+
+     [:p {:style {:text-align :center}}
+      [add-section-button (count @sections)]]]))
