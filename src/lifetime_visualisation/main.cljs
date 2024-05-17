@@ -96,7 +96,7 @@
                :toggle    (fn [_]
                             (ra/rswap! show-popover? not))
                :isOpen   @show-popover?}
-      [popover-body {:style {:background-color "yellow"}}
+      [popover-body {:class "checkbox-popover"}
        [:div (utils/->ui-date-str (:date this-date))]]]]))
 
 (defn checkbox-sequence [dates]
@@ -180,13 +180,20 @@
           :style {:margin-left "1rem"}}]]
     [section-title-input form-id]))
 
+(defn remove-section-button [form-id]
+  [ui/close-button {:on-click (fn [] (rf/dispatch [:remove-section form-id]))}])
+
 (defn section [form-id]
   (ra/with-let [form-data (rf/subscribe [:section-data form-id])]
     (let [{:keys [title dates-sequence enable-end-date? enable-occurences? disable-title?]} @form-data]
       [:div {:class "mt-5"}
-       [row
-        [col {:style {:text-align :center}}
-         [section-title-div title form-id disable-title?]]]
+       [row {:class "m-1"}
+        [col {:class "col-11"
+              :style {:text-align :left}}
+         [section-title-div title form-id disable-title?]]
+        [col {:class "col-1"
+              :style {:text-align :right}}
+         [remove-section-button form-id]]]
        [form-input-fields form-id enable-end-date? enable-occurences?]
        [row {:class "my-3"}
         [col {:style {:text-align :center}}

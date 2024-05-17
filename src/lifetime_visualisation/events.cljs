@@ -121,3 +121,7 @@
 (reg-event-db :toggle-section-title
   (fn [db [_ form-id]]
     (update-in db [:sections form-id :disable-title?] not)))
+
+(reg-event-db :remove-section
+  (fn [db [_ form-id]]
+    (update-in db [:sections] dissoc form-id)))

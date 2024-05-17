@@ -15,3 +15,4 @@
 (def button (ra/adapt-react-class rs/Button))
 (def input (ra/adapt-react-class rs/Input))
 (def label (ra/adapt-react-class rs/Label))
+(def close-button (ra/adapt-react-class rs/CloseButton))

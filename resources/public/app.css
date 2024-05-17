@@ -1,10 +1,17 @@
+/* https://www.canva.com/colors/color-palettes/healthy-leaves/
+     Olive Green: #3D550C
+     Lime Green: #81B622
+     Yellow Green: #ECF87F
+     Green: #59981A
+*/
+
 body {
-     background-color: green;
+     background-color: #59981A;
      background-image: url("https://images.pexels.com/photos/19670/pexels-photo.jpg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2");
 }
 
 .page-heading {
-     color:      green;
+     color: #59981A;
      text-align: center;
 }
 
@@ -14,32 +21,44 @@ body {
 
 .input-field-label {
      padding-left: "-12px";
-     color: green;
+     color: #59981A;
      font-weight: bold;
 }
 
 .toggle-label {
      margin-left: 0.5rem;
      font-weight: bold;
-     color: green;
+     color: #59981A;
 }
 
 .custom-icon {
      font-size: 0.8rem;
-     color: green;
+     color: #59981A;
+}
+
+.calculate-button {
+     color: #59981A;
 }
 
 .custom-control-input:checked  {
-     border-color: green !important;
-     background-color: green !important;
+     border-color: #59981A !important;
+     background-color: #59981A !important;
  }
 
 .title-input-field {
      height: 36px;
+     width: 50%;
 }
 
 .section-title {
-     color: green;
+     color: #59981A;
      font-size: 24px;
      font-weight: bold;
+     text-decoration: underline;
+}
+
+.checkbox-popover {
+     background-color: #ECF87F;
+     border-style: solid;
+     border-color: #81B622;
 }
