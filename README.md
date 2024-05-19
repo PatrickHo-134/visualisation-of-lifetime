@@ -1,4 +1,4 @@
-# Visualisation of lifetime
+# [Visualisation of lifetime](https://patrickho-134.github.io/visualisation-of-lifetime/)
 
 A [re-frame](https://github.com/day8/re-frame) application designed to visualise lifetime of a person or a journey. By visualising time in a number of weeks, months or years, this encourages regular reflection, sets goals, and reminds you to be proud of yourself for what you’ve accomplished in life.
 
