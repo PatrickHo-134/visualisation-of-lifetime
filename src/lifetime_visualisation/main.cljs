@@ -173,40 +173,65 @@
 
 (defn section-title-div [current-title form-id edit-disabled?]
   (if edit-disabled?
-    [:div {:class    "section-title"
-           :on-click (fn [] (rf/dispatch [:toggle-section-title form-id]))}
-     current-title
+    [:div {:class "section-title"}
+     [:span current-title]
      [:i {:class "fa fa-edit"
-          :style {:margin-left "1rem"}}]]
+          :style {:margin-left "1rem"
+                  :margin-top "2px"}
+          :on-click (fn [] (rf/dispatch [:toggle-section-title form-id]))}]]
     [section-title-input form-id]))
 
+(defn show-hide-button [form-id]
+  [button {:on-click #(rf/dispatch [:toggle-display-setting form-id])
+           :color    "success m-1"
+           :size     :sm
+           :outline  true}
+   [:b "Show/Hide"]])
+
 (defn remove-section-button [form-id]
-  [ui/close-button {:on-click (fn [] (rf/dispatch [:remove-section form-id]))}])
+  [button {:color    "danger m-1"
+           :outline  true
+           :size     :sm
+           :on-click (fn [] (rf/dispatch [:remove-section form-id]))}
+   [:b "Remove"]])
+
+(defn section-heading [form-id title disable-title?]
+  [row {:class "m-1"}
+   [col {:class "col-lg-9 col-md-6"
+         :style {:text-align :left}}
+    [section-title-div title form-id disable-title?]]
+   [col {:class "col-lg-3 col-md-6"
+         :style {:text-align :right}}
+    [show-hide-button form-id]
+    [remove-section-button form-id]]])
 
 (defn section [form-id]
   (ra/with-let [form-data (rf/subscribe [:section-data form-id])]
-    (let [{:keys [title dates-sequence enable-end-date? enable-occurences? disable-title?]} @form-data]
+    (let [{:keys [title dates-sequence
+                  enable-end-date? enable-occurences?
+                  disable-title? hide-section?]} @form-data]
       [:div {:class "mt-5"}
-       [row {:class "m-1"}
-        [col {:class "col-11"
-              :style {:text-align :left}}
-         [section-title-div title form-id disable-title?]]
-        [col {:class "col-1"
-              :style {:text-align :right}}
-         [remove-section-button form-id]]]
-       [form-input-fields form-id enable-end-date? enable-occurences?]
-       [row {:class "my-3"}
-        [col {:style {:text-align :center}}
-         [calculate-button form-id false]]] ;; TODO: validation here!
-       (when (seq dates-sequence)
-         (if (< (count dates-sequence) 2000)
-           [container
-            [checkbox-sequence dates-sequence]]
-           (let [n-dates (take 2000 dates-sequence)]
-             [container
-              [checkbox-sequence n-dates]
-              [row [col "......"]]
-              [row [col "View has reached limit"]]])))
+       [section-heading form-id title disable-title?]
+
+       [ui/collapse {:is-open (not hide-section?)}
+        [ui/card
+         [ui/card-body
+          [form-input-fields form-id enable-end-date? enable-occurences?]
+
+          [row {:class "my-3"}
+           [col {:style {:text-align :center}}
+            [calculate-button form-id false]]] ;; TODO: validation here!
+
+          (when (seq dates-sequence)
+            (if (< (count dates-sequence) 2000)
+              [container
+               [checkbox-sequence dates-sequence]]
+              (let [n-dates (take 2000 dates-sequence)]
+                [container
+                 [checkbox-sequence n-dates]
+                 [row [col "......"]]
+                 [row [col "View has reached limit"]]])))]]]
+
        [:hr]])))
 
 (defn render-sections [sections]

@@ -16,3 +16,6 @@
 (def input (ra/adapt-react-class rs/Input))
 (def label (ra/adapt-react-class rs/Label))
 (def close-button (ra/adapt-react-class rs/CloseButton))
+(def card (ra/adapt-react-class rs/Card))
+(def card-body (ra/adapt-react-class rs/CardBody))
+(def collapse (ra/adapt-react-class rs/Collapse))

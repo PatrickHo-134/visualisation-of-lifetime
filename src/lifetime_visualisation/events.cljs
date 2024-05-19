@@ -125,3 +125,7 @@
 (reg-event-db :remove-section
   (fn [db [_ form-id]]
     (update-in db [:sections] dissoc form-id)))
+
+(reg-event-db :toggle-display-setting
+  (fn [db [_ form-id]]
+    (update-in db [:sections form-id :hide-section?] not)))
