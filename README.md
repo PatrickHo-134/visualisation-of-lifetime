@@ -2,6 +2,8 @@
 
 A [re-frame](https://github.com/day8/re-frame) application designed to visualise lifetime of a person or a journey. By visualising time in a number of weeks, months or years, this encourages regular reflection, sets goals, and reminds you to be proud of yourself for what you’ve accomplished in life.
 
+You can check out this [link](https://patrickho-134.github.io/visualisation-of-lifetime/) to see the final product of this project.
+
 Inspiration for this project comes from this [post](https://waitbutwhy.com/2014/05/life-weeks.html) of Tim Urban.
 
 ## Getting Started
