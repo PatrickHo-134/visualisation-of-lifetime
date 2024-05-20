@@ -1,8 +1,10 @@
 (ns lifetime-visualisation.events
   (:require [cljs-time.coerce :as time.coerce]
             [cljs-time.core :as time.core]
+            [clojure.edn :refer [read-string]]
             [day8.re-frame.tracing :refer-macros [fn-traced]]
             [lifetime-visualisation.db :as db]
+            [lifetime-visualisation.localstorage :as localstorage]
             [lifetime-visualisation.utils :as utils]
             [re-frame.core :as re-frame :refer [reg-event-db reg-event-fx
                                                 reg-sub]]))
@@ -19,7 +21,7 @@
      :enable-end-date?   true
      :enable-occurences? false
      :disable-title?     true
-     :frequency          :weekly}))
+     :frequency          :monthly}))
 
 (reg-sub :sections
   (fn [db _]
@@ -75,8 +77,15 @@
 
 (reg-event-fx :initialize-main-page
   (fn [{:keys [db]} _]
-    {:db       (assoc-in db [:sections] {:form-1 (default-form-data "Example 1")})
-     :dispatch [:recalculate-dates-sequence :form-1]}))
+    (let [saved-sections (-> (localstorage/get-item "sections")
+                             (read-string))
+          example-data   (-> (default-form-data "My timeline")
+                             (assoc :start-date (utils/str->date "2000-01-01")
+                                    :end-date (utils/str->date "2050-01-01")))]
+      (if (seq saved-sections)
+        {:db       (assoc-in db [:sections] saved-sections)}
+        {:db       (assoc-in db [:sections] {:form-1 example-data})
+         :dispatch [:recalculate-dates-sequence :form-1]}))))
 
 (reg-event-db :calculate-end-date-and-dates-sequence
   (fn [db [_ form-id]]
@@ -85,7 +94,11 @@
                            (-> (utils/create-dates-of-occurence start-date occurences frequency)
                                (utils/produce-date-sequence (time.core/today))
                                vec)
-                           [])]
+                           [])
+          updated-db (update-in db [:sections form-id]
+                                merge {:end-date       (-> dates-sequence last :date)
+                                       :dates-sequence dates-sequence})]
+      (localstorage/set-item! "sections" (:sections updated-db))
       (update-in db [:sections form-id] merge {:end-date       (-> dates-sequence last :date)
                                                :dates-sequence dates-sequence}))))
 
@@ -96,7 +109,11 @@
                            (-> (utils/create-dates-during-period start-date end-date frequency)
                                (utils/produce-date-sequence (time.core/today))
                                vec)
-                           [])]
+                           [])
+          updated-db (update-in db [:sections form-id]
+                                merge {:occurences     (count dates-sequence)
+                                       :dates-sequence dates-sequence})]
+      (localstorage/set-item! "sections" (:sections updated-db))
       (update-in db [:sections form-id] merge {:occurences     (count dates-sequence)
                                                :dates-sequence dates-sequence}))))
 
