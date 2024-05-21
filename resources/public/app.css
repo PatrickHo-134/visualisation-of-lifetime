@@ -13,6 +13,7 @@ body {
 .page-heading {
      color: #59981A;
      text-align: center;
+     margin-top: 2rem;
 }
 
 .input-field-control {
