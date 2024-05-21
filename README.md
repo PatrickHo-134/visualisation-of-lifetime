@@ -14,7 +14,7 @@ Inspiration for this project comes from this [post](https://waitbutwhy.com/2014/
 [Single Page Application (SPA)](https://en.wikipedia.org/wiki/Single-page_application)
 * Languages
   - Front end is [ClojureScript](https://clojurescript.org/) with ([re-frame](https://github.com/day8/re-frame))
-  - CSS compilation is [Garden](https://github.com/noprompt/garden) with [Spade](https://github.com/dhleong/spade)
+
 * Dependencies
   - UI framework: [re-frame](https://github.com/day8/re-frame)
   ([docs](https://github.com/day8/re-frame/blob/master/docs/README.md),
@@ -22,7 +22,6 @@ Inspiration for this project comes from this [post](https://waitbutwhy.com/2014/
   [Reagent](https://github.com/reagent-project/reagent) ->
   [React](https://github.com/facebook/react)
   - Client-side routing: [bidi](https://github.com/juxt/bidi) and [pushy](https://github.com/clj-commons/pushy)
-  - CSS rendering: [Garden](https://github.com/noprompt/garden)
 * Build tools
   - CLJS compilation, dependency management, REPL, & hot reload: [`shadow-cljs`](https://github.com/thheller/shadow-cljs)
   - Test framework: [cljs.test](https://clojurescript.org/tools/testing)
@@ -49,8 +48,6 @@ Inspiration for this project comes from this [post](https://waitbutwhy.com/2014/
     - Created on build with either the [dev](#running-the-app) or [prod](#production) profile
     - `js/compiled/`: compiled CLJS (`shadow-cljs`)
       - Not tracked in source control; see [`.gitignore`](.gitignore)
-* [`src/visualisation-of-lifetime/styles.cljs`](src/visualisation-of-lifetime/styles.cljs): CSS compilation source file (ClojureScript,
-[Garden](https://github.com/noprompt/garden))
 * [`src/visualisation-of-lifetime/`](src/visualisation-of-lifetime/): SPA source files (ClojureScript,
 [re-frame](https://github.com/Day8/re-frame))
   - [`core.cljs`](src/visualisation-of-lifetime/core.cljs): contains the SPA entry point, `init`
